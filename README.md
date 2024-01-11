@@ -1,6 +1,6 @@
-# React Native Starter Kit
+# Expense Manager
 
-Simple react native kit, working as an expense manager for android/ios devices.
+A simple app to track all the income and expense, then generate reports based on month, category or year.
 
 ## Environment Versions
 - Node: 10.15.3
