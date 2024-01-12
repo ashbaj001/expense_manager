@@ -1,4 +1,4 @@
-            - name: CodeGuru Reviewer
+- name: CodeGuru Reviewer
   # You may pin to the exact commit or the version.
   # uses: aws-actions/codeguru-reviewer@e96af14e3ba9bac3cca62a524bd5a8345038c684
   uses: aws-actions/codeguru-reviewer@v1.1
