@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React from 'react';
 import moment from 'moment';
 import {connect} from 'react-redux';
-import {Container, Content, Button, Segment, Text} from 'native-base';
+import {Container, View, Button, Segment, Text} from 'native-base';
 
 import cs from '../../styles/common';
 import {selectReportType} from '../../actions';
@@ -96,13 +96,13 @@ const ReportPage = (props) => {
         </Button>
       </Segment>
 
-      <Content>
+      <View>
         <ReportDetail
           data={getData(incomeCatgories, records)}
           expenseData={getData(expenseCategories, records)}
           yearWiseData={yearWiseData}
         />
-      </Content>
+      </View>
     </Container>
   );
 };
@@ -115,15 +115,15 @@ const mapStateToProps = (state) => {
     selectedReportType,
   } = state;
 
-  const records = _.map(recordList, (val, id) => {
+  const records = recordList.map((val, id) => {
     return val;
   });
 
-  const accounts = _.map(accountList, (val, id) => {
+  const accounts = accountList.map((val, id) => {
     return val;
   });
 
-  const categories = _.map(categoryList, (val, id) => {
+  const categories = categoryList.map((val, id) => {
     return val;
   });
 
