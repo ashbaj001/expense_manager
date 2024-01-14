@@ -59,6 +59,61 @@ export const init = () => {
         },
       );
     });
+
+    db.transaction((tx) => {
+      tx.executeSql(
+        'CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY NOT NULL, fullname TEXT, email TEXT, displaypicture TEXT, token TEXT)',
+        [],
+        () => {
+          console.warn('Table backup created');
+          resolve();
+        },
+        (err) => {
+          reject(err);
+        },
+      );
+    });
+  });
+
+  return promise;
+};
+
+export const insertUser = (fullName, email, displayPicture, token) => {
+  const promise = new Promise((resolve, reject) => {
+    db.transaction((tx) => {
+      tx.executeSql(
+        'INSERT INTO user (fullname, email, displaypicture, token) VALUES (?,?,?,?)',
+        [fullName, email, displayPicture, token],
+        (_, result) => {
+          alert(result);
+          resolve(result);
+        },
+        (err) => {
+          alert(err);
+
+          reject(err);
+        },
+      );
+    });
+  });
+
+  return promise;
+};
+
+export const fetchUser = () => {
+  const promise = new Promise((resolve, reject) => {
+    db.transaction((tx) => {
+      tx.executeSql(
+        'SELECT * FROM user',
+        [],
+        (_, result) => {
+          resolve(result.rows.item(0));
+        },
+        (err) => {
+          reject(err);
+        },
+      );
+    });
   });
 
   return promise;
@@ -74,7 +129,6 @@ export const insertAccount = (title, type, openingBalance, icon) => {
           resolve(result);
         },
         (err) => {
-          console.warn(err);
           reject(err);
         },
       );
@@ -85,10 +139,6 @@ export const insertAccount = (title, type, openingBalance, icon) => {
 };
 
 export const insertAccounts = (accounts) => {
-  console.warn(
-    'INSERT INTO accounts (id, title, type, openingBalance, icon) VALUES ' +
-      accounts,
-  );
   const promise = new Promise((resolve, reject) => {
     db.transaction((tx) => {
       tx.executeSql(
@@ -434,11 +484,9 @@ export const resetData = (accounts, categories, records) => {
         );
       },
       (error) => {
-        console.log('transaction error: ' + error.message);
         reject(error.message);
       },
       () => {
-        console.log('transaction ok');
         resolve();
       },
     );

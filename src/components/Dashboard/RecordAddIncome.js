@@ -1,12 +1,18 @@
 import _ from 'lodash';
 import {connect} from 'react-redux';
 import React, {Component} from 'react';
+import {Provider} from 'react-native-paper';
 import {Container, Content, View} from 'native-base';
 
 import RecordForm from './RecordForm';
 import SectionHeader from './SectionHeader';
 import {ButtonBox, ErrorBox} from '../Common';
-import {addRecord, editRecord, deleteRecord} from '../../actions';
+import {
+  addRecord,
+  editRecord,
+  deleteRecord,
+  selectCategoryType,
+} from '../../actions';
 
 import cs from '../../styles/common';
 
@@ -70,6 +76,7 @@ class RecordAddIncome extends Component {
         selectedCategoryType: type,
         formType: type,
       });
+      this.props.selectCategoryType(type);
     }
   }
 
@@ -161,31 +168,33 @@ class RecordAddIncome extends Component {
     const {id, categoryId, error} = this.state;
 
     return (
-      <Container style={cs.bg_dark_lightblue}>
-        <SectionHeader />
-        <Content>
-          <RecordForm
-            date={this.state.date}
-            onStateChange={this.onStateChange}
-            amount={this.state.amount}
-            description={this.state.description}
-            selectedCategoryType={this.props.selectedCategoryType}
-            accounts={accounts}
-            payFrom={this.state.payFrom}
-            payTo={this.state.payTo}
-            accountFrom={this.state.accountFrom}
-            accountTo={this.state.accountTo}
-            attachment={this.state.attachment}
-            categories={[
-              ...categories,
-              {id: 0, title: 'Add Category', icon: 'plus', type: ''},
-            ]}
-            categoryId={categoryId}
-          />
-          {this.showError(error)}
-          {this.showButton(id)}
-        </Content>
-      </Container>
+      <Provider>
+        <Container style={cs.bg_dark_lightblue}>
+          <SectionHeader />
+          <Content>
+            <RecordForm
+              date={this.state.date}
+              onStateChange={this.onStateChange}
+              amount={this.state.amount}
+              description={this.state.description}
+              selectedCategoryType={this.props.selectedCategoryType}
+              accounts={accounts}
+              payFrom={this.state.payFrom}
+              payTo={this.state.payTo}
+              accountFrom={this.state.accountFrom}
+              accountTo={this.state.accountTo}
+              attachment={this.state.attachment}
+              categories={[
+                ...categories,
+                {id: 0, title: 'Add Category', icon: 'plus', type: ''},
+              ]}
+              categoryId={categoryId}
+            />
+            {this.showError(error)}
+            {this.showButton(id)}
+          </Content>
+        </Container>
+      </Provider>
     );
   }
 }
@@ -198,10 +207,7 @@ const mapStateToProps = (state) => {
 
   return {
     accounts,
-    categories: _.filter(
-      categories,
-      (category) => category.type === state.selectedCategoryType,
-    ),
+    categories,
     selectedCategoryType: state.selectedCategoryType,
     error: state.account.error,
     loading: state.account.loading,
@@ -212,4 +218,5 @@ export default connect(mapStateToProps, {
   addRecord,
   editRecord,
   deleteRecord,
+  selectCategoryType,
 })(RecordAddIncome);
