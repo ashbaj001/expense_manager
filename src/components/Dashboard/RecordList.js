@@ -1,17 +1,23 @@
 /* eslint-disable react-native/no-inline-styles */
 import _ from 'lodash';
 import moment from 'moment';
-
+import {ScrollView} from 'react-native';
 import React, {PureComponent} from 'react';
 import {connect} from 'react-redux';
-import {View, Spinner, Text} from 'native-base';
+import {View, Spinner, Text, Content} from 'native-base';
 
 import RecordTimeLine from './RecordTimeLine';
 import RecordEmpty from './RecordEmpty';
 import {CATEGORY_TYPE} from '../../constants';
 
 import cs from '../../styles/common';
-import {getRecords, getAccounts, getCategories, getBackup} from '../../actions';
+import {
+  getRecords,
+  getAccounts,
+  getCategories,
+  getBackup,
+  getUserInfo,
+} from '../../actions';
 
 class RecordList extends PureComponent {
   constructor(props) {
@@ -52,10 +58,11 @@ class RecordList extends PureComponent {
   }
 
   componentDidMount() {
+    this.props.getBackup();
     this.props.getRecords();
     this.props.getAccounts();
+    this.props.getUserInfo();
     this.props.getCategories();
-    this.props.getBackup();
   }
 
   render() {
@@ -63,32 +70,13 @@ class RecordList extends PureComponent {
     const balance = parseFloat(totalEarned - totalSpent).toFixed(2);
 
     return (
-      <View style={cs.bg_dark_lightblue}>
-        <View style={cs.summary_header}>
-          <Text style={[cs.h4, cs.center, cs.color_white]}>Balance</Text>
-          <Text style={[cs.h1, cs.center, cs.color_white]}>$ {balance}</Text>
-        </View>
-
-        <View style={cs.header_block}>
-          <View style={cs.header_block_left}>
-            <Text style={[cs.h3, cs.color_white]}>Total Earned</Text>
-            <Text style={[cs.color_light_blue, cs.h3]}>
-              + $ {totalEarned.toFixed(2)}
-            </Text>
-          </View>
-          <View style={cs.header_block_right}>
-            <Text style={[cs.h3, cs.color_white]}>Total Spent</Text>
-            <Text style={[cs.color_light_red, cs.h3]}>
-              - $ {totalSpent.toFixed(2)}
-            </Text>
-          </View>
-        </View>
-        <View style={{height: 500}}>{this.showList()}</View>
+      <View style={[cs.bg_dark_lightblue, {height: '98%'}]}>
+        {this.showList(balance, totalEarned, totalSpent)}
       </View>
     );
   }
 
-  showList() {
+  showList(balance, totalEarned, totalSpent) {
     const {selectedMonth} = this.props;
 
     let filteredList = _.filter(this.props.records, (record) => {
@@ -133,6 +121,33 @@ class RecordList extends PureComponent {
         !!this.props.navigate && (
           <RecordTimeLine
             records={refinnedList}
+            ListHeaderComponent={() => (
+              <View>
+                <View style={cs.summary_header}>
+                  <Text style={[cs.h4, cs.center, cs.color_white]}>
+                    Balance
+                  </Text>
+                  <Text style={[cs.h1, cs.center, cs.color_white]}>
+                    $ {balance}
+                  </Text>
+                </View>
+
+                <View style={cs.header_block}>
+                  <View style={cs.header_block_left}>
+                    <Text style={[cs.h3, cs.color_white]}>Total Earned</Text>
+                    <Text style={[cs.color_light_blue, cs.h3]}>
+                      + $ {totalEarned.toFixed(2)}
+                    </Text>
+                  </View>
+                  <View style={cs.header_block_right}>
+                    <Text style={[cs.h3, cs.color_white]}>Total Spent</Text>
+                    <Text style={[cs.color_light_red, cs.h3]}>
+                      - $ {totalSpent.toFixed(2)}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+            )}
             navigate={this.props.navigate}
           />
         )
@@ -166,6 +181,7 @@ const mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, {
   getBackup,
+  getUserInfo,
   getRecords,
   getAccounts,
   getCategories,
